@@ -1,0 +1,63 @@
+============================================================
+ Variable Documentation for Your Program (Updated)
+============================================================
+
+This file explains the purpose of each variable used in your program.
+
+------------------------------------------------------------
+ Function: getColors
+------------------------------------------------------------
+color        (ifstream)                        -> opens and reads the config file at 'color_location'.
+value1       (string)                          -> stores the key read from the file (e.g., 'background', 'color0').
+value2       (string)                          -> stores the value assigned to the key (e.g., '#ffffff').
+colors       (vector<pair<string,string>>)    -> stores all the key-value pairs found in the file.
+
+------------------------------------------------------------
+ Function: findColor
+------------------------------------------------------------
+color_first  (const char*)                    -> the name of the color key to search for (e.g., 'color14').
+colors       (vector<pair<string,string>>)    -> the list of key-value pairs to search.
+return_value (pair<string,string>)            -> result; contains the found key and value, or empty if not found.
+c            (auto&)                          -> iterator variable used to loop through 'colors'.
+
+------------------------------------------------------------
+ Function: menu_activate
+------------------------------------------------------------
+listofcolors       (vector<string>)          -> stores all .conf filenames found in the 'colors' directory.
+quit1              (bool)                    -> flag to exit the menu loop.
+current_page       (int)                     -> keeps track of the current page number displayed.
+pages              (double)                  -> total number of pages (calculated based on number of files).
+shouldshow         (int)                     -> the index of the last item to show on the current page.
+shouldshowstart    (int)                     -> the index of the first item to show on the current page.
+output1            (string)                  -> formatted string for each menu entry.
+calc1              (int)                     -> number of spaces to add for alignment in the menu display.
+options            (string)                  -> user input in the color selection/paging menu.
+
+------------------------------------------------------------
+ Loop variables in menu_activate
+------------------------------------------------------------
+i                  (int)                     -> loop counter for displaying file entries.
+j                  (int)                     -> loop counter for padding spaces in menu formatting.
+
+------------------------------------------------------------
+ Function: menu
+------------------------------------------------------------
+selection          (int)                     -> determines which menu to show (main menu or submenu).
+option             (string)                  -> stores the user’s main menu choice input.
+
+------------------------------------------------------------
+ Inside menu -> Test Menu
+------------------------------------------------------------
+colors             (vector<pair<string,string>>) -> stores the colors loaded from a file.
+color14            (pair<string,string>)     -> stores the result of searching for 'color14'.
+find               (string)                  -> the user’s requested color key name to search.
+location           (string)                  -> user input file path.
+find_color         (pair<string,string>)     -> stores the result of searching 'find' in the given file.
+size_test          (string)                  -> used for testing string lengths in the menu.
+twochar            (string)                  -> test string '12' for .length() demonstration.
+
+------------------------------------------------------------
+ Function: main
+------------------------------------------------------------
+(no variables defined; just calls menu(1) to start the program)
+

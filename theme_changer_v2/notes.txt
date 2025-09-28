@@ -1,0 +1,21 @@
+what it has to do is:
+        - kitty
+        - nvim
+        - wallpaper
+        - i3 windowborders
+        - palette from imagick
+
+        - save the palette from imagick to a file and then use it for everything
+
+so what we need to do first is the "browser" with diffrent themes that can be activated or be saved.
+
+
+1. print menu
+2. select
+        - select w numbers
+3. print menu 2
+4. select
+
+
+fix lenght list issue too long
+fix max 10 list themes
