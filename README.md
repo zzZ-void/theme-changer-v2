@@ -19,5 +19,3 @@ Run the program in the terminal:
 
 ```bash
 ./main
-
-<img src="./preview.png" alt="Theme Changer Preview" width="300"/> ```
