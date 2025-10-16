@@ -20,4 +20,5 @@ Run the program in the terminal:
 ```bash
 ./main
 ```
+### Preview
 ![preview](preview.png)
