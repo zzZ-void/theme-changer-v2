@@ -105,57 +105,18 @@ int activate(int index_of_selected_color, const char* directory)
   string colorname = listofcolors[index_of_selected_color];
   string colorpath = string(directory) + "/" + colorname;
 
-  fs::path filepathkitty = fs::path(getenv("HOME")) / ".config" / "kitty" / "themes" / colorname;
+  fs::path filepathkitty = fs::path(getenv("HOME")) / ".config" / "kitty" / "current-theme.conf";
   fs::path folderpathkitty = fs::path(getenv("HOME")) / ".config" / "kitty" / "themes";
   vector<pair<string, string>> colorsc = getColorsC(filepathkitty.c_str());
 
-  //check if the themes folder exists
-  if(!fs::exists(folderpathkitty))
-  {
-    cout << "The \"themes\" folder does not exist." << endl;
-    cout << "Creating one.." << endl;
-    fs::create_directory(folderpathkitty);
-    stop();
-  }
 
   //check if the file exists in the theme folder
   if(fs::exists(filepathkitty))
   {
-    pair<string, string> eto_made = findColorC("#eto_made", colorsc);
+    fs::copy_file(colorpath, filepathkitty, fs::copy_options::overwrite_existing);
+    cout << "Updating Kitty..." << endl;
 
-    //if the existing file is not made by itself (code)
-    if(eto_made.second.empty())
-    {
-      cout << "The file already exists." << endl;
-      cout << "Choose an action: (r)ename / (o)verwrite / (c)ancel: ";
-
-      string options;
-      getline(cin, options);
-
-      if(tolower(options[0]) == 'r')
-      {
-        //rename currently activating file
-      }
-      if(tolower(options[0]) == 'o')
-      {
-        //overwrite (easy)
-        fs::copy_file(colorpath, filepathkitty, fs::copy_options::overwrite_existing);
-        cout << "overwritten." << endl;
-        stop();
-      }
-      if(tolower(options[0]) == 'c')
-      {
-        cout << "cancled." << endl;
-        stop();
-        return 1;
-      }
-    }
-    else
-    {
-      fs::copy_file(colorpath, filepathkitty, fs::copy_options::overwrite_existing);
-      cout << "Updating..." << endl;
-      stop();
-    }
+    stop();
   }
   else
   {
@@ -163,22 +124,21 @@ int activate(int index_of_selected_color, const char* directory)
     cout << "Creating..." << endl;
     stop();
   }
+  //update nvim
+  fs::path filepathnvim= fs::path(getenv("HOME")) / ".conf" / "nvim" / "colors" / "current-theme.conf";
+  if(fs::exists(filepathnvim))
+  {
+    //edit theme logic
+  }
+  else
+  {
+    //create theme logic
+  }
   return 1;
 }
 
 int menu_activate(const char* directory)
 {
-  redraw();
-  cout << "##########################################" << endl;
-  cout << "###      エト ヨシムラ Activation Menu ###" << endl;
-  cout << "##########################################" << endl;
-  cout << "###                                    ###" << endl;
-  cout << "### Do what it says below              ###" << endl;
-  cout << "###                                    ###" << endl;
-  cout << "##########################################" << endl;
-  cout << "###                                    ###" << endl;
-
-
   //get all of the files inside
   vector<string> listofcolors = listColors(directory);
 
@@ -282,20 +242,131 @@ int menu_activate(const char* directory)
   return 1;
 }
 
-int menu_delete()
+int deleteColor(int index_of_selected_color, const char* directory)
 {
-  //the logic
+  vector<string> listofcolors = listColors(directory);
+  string colorname = listofcolors[index_of_selected_color];
+
+  fs::path kitty = fs::path(getenv("HOME")) / ".config" / "kitty" / "current-theme.conf"; 
+  fs::path colors = fs::path("colors") / colorname;
+
+  fs::remove(kitty);
+  fs::remove(colors);
+  cout << "Deleted." << endl;
+  stop();
   return 1;
 }
 
-int menu(int selection)
+
+int menu_delete(const char* directory)
+{
+  //get all of the files inside
+  vector<string> listofcolors = listColors(directory);
+
+  bool quit1 = false;
+  int current_page = 1;
+  double pages = ceil(static_cast<double>(listofcolors.size()) / 10);
+  int contentsize = listofcolors.size();
+  int selectedcolorindex = 0;
+  int shouldshow = 10;
+  int shouldshowstart = shouldshow - 10;
+
+  //cout all of them but before format them
+  do
+  {
+    redraw();
+    cout << "##########################################" << endl;
+    cout << "###      エト ヨシムラ Activation Menu ###" << endl;
+    cout << "##########################################" << endl;
+    cout << "###                                    ###" << endl;
+    cout << "### select color to delete             ###" << endl;
+    cout << "###                                    ###" << endl;
+    cout << "##########################################" << endl;
+    cout << "###                                    ###" << endl;
+    for(int i = shouldshowstart; i < shouldshow && i < listofcolors.size(); i++)
+    {
+      string output1;
+      output1 += "### ";
+      output1 += to_string((i+1)) + ". ";
+      output1 += listofcolors[i];
+
+      int calc1= 35 - output1.size();
+
+      if(calc1 < 0)
+      {
+        output1.resize(35);
+        output1 += "... ###";
+      }
+      else
+      {
+        for(int j = 0; j < calc1; j++)
+        {
+          output1 += " ";
+        }
+        output1 += "    ###";
+      }
+      cout << output1 << endl;
+
+    }
+    cout << "###                                    ###" << endl;
+    cout << "##########################################" << endl;
+
+    //ask if show next page if possible
+    if (listofcolors.size() > 0)
+    {
+      string output2 = "Select page (" + to_string(current_page) + "/" + to_string((int)pages) + ") with n/p or the color number: ";
+      cout << output2;
+
+      string options;
+
+      getline(cin, options);
+
+      if(!options.empty())
+      {
+        if(tolower(options[0]) == 'n')
+        {
+          if(current_page < pages)
+          {
+            shouldshow = shouldshow + 10;
+            shouldshowstart = shouldshow - 10;
+            current_page += 1;
+          }
+        }
+        else if(tolower(options[0]) == 'p')
+        {
+          if(shouldshow > 10)
+          {
+            shouldshow = shouldshow - 10;
+            shouldshowstart = shouldshow - 10;
+            current_page += -1;
+          }
+        }
+        else if(tolower(options[0]) == 'q')
+        {
+          return 1;
+        }
+        else if(stoi(options) <= contentsize)
+        {
+          quit1 = true;
+          deleteColor((stoi(options) - 1), directory);
+        }
+      }
+    }
+    else
+    {
+      cout << "No options to select from" << endl;
+    }
+  }
+  while(!quit1);
+  return 1;
+}
+
+int menu()
 {
   cout << "##########################################" << endl;
   cout << "###         エト ヨシムラ Menu         ###" << endl;
   cout << "##########################################" << endl;
 
-  if(selection == 1)
-  {
     cout << "###                                    ###" << endl;
     cout << "### Select Option:                     ###" << endl;
     cout << "###     1. Activate                    ###" << endl;
@@ -318,6 +389,10 @@ int menu(int selection)
     else if(!option.empty() && stoi(option) == 1)
     {
       menu_activate("colors");
+    }
+    else if(!option.empty() && stoi(option) == 3)
+    {
+      menu_delete("colors");
     }
     else if(!option.empty() && stoi(option) == 4)
     {
@@ -382,7 +457,6 @@ int menu(int selection)
         cout << "the string size is " << size_test.size() << " indicies high/long" << endl;
       }
     }
-  }
   return 1;
 }
 
@@ -391,7 +465,7 @@ int main()
   //start pseudo
   cout << "\033[?1049h\033[H";
 
-  menu(1);
+  menu();
 
   //end pseudo
   cout << "\033[?1049l";
