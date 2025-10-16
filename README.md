@@ -19,3 +19,4 @@ Run the program in the terminal:
 
 ```bash
 ./main
+![preview](preview.png)
